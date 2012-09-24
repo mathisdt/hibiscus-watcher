@@ -23,7 +23,7 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.zephyrsoft.hibiscuswatcher.model.Account;
 
 /**
- * Fetch the information from Hibiscus.
+ * Fetch information from Hibiscus.
  * 
  * @author Mathis Dirksen-Thedens
  */
@@ -40,19 +40,21 @@ public class Fetcher {
 	}
 	
 	private XmlRpcClient createXmlRpcClient() {
-		// Client-Config erzeugen
+		// create client configuration
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 		try {
 			config.setServerURL(new URL(url));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
-			Starter.die(2, "could not parse URL");
+			Starter.die("could not parse URL");
 		}
 		config.setBasicUserName(username);
 		config.setBasicPassword(password);
 		
-		if (url.startsWith("https"))
+		// ignore self-signed certificate errors
+		if (url.startsWith("https")) {
 			disableCertCheck();
+		}
 		
 		XmlRpcClient client = new XmlRpcClient();
 		client.setConfig(config);
@@ -62,32 +64,38 @@ public class Fetcher {
 	
 	private static void disableCertCheck() {
 		TrustManager dummy = new X509TrustManager() {
+			@Override
 			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
 				return null;
 			}
 			
+			@Override
 			public void checkClientTrusted(X509Certificate[] certs, String authType) {
+				// nothing to do
 			}
 			
+			@Override
 			public void checkServerTrusted(X509Certificate[] certs, String authType) {
+				// nothing to do
 			}
 		};
 		
 		SSLContext sc = null;
 		try {
 			sc = SSLContext.getInstance("SSL");
+			try {
+				sc.init(null, new TrustManager[] {dummy}, new SecureRandom());
+			} catch (KeyManagementException e) {
+				e.printStackTrace();
+				Starter.die("key error");
+			}
+			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
-			Starter.die(3, "algorithm not found");
+			Starter.die("algorithm not found");
 		}
-		try {
-			sc.init(null, new TrustManager[] {dummy}, new SecureRandom());
-		} catch (KeyManagementException e) {
-			e.printStackTrace();
-			Starter.die(4, "key error");
-		}
-		HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 		HostnameVerifier dummy2 = new HostnameVerifier() {
+			@Override
 			public boolean verify(String host, SSLSession session) {
 				return true;
 			}
@@ -105,27 +113,29 @@ public class Fetcher {
 			result = client.execute(methodName, Collections.EMPTY_LIST);
 		} catch (XmlRpcException e) {
 			e.printStackTrace();
-			Starter.die(5, "xml-rpc error while executing service " + methodName);
+			Starter.die("xml-rpc error while executing service " + methodName);
 		}
 		
 		Object[] array = (Object[]) result;
-		for (Object object : array) {
-			@SuppressWarnings("unchecked")
-			Map<String, String> fetched = (Map<String, String>) object;
-			String name = fetched.get("bezeichnung");
-			Account account = new Account(name);
-			String balanceAsString = fetched.get("saldo");
-			String balanceForParsing = balanceAsString;
-			if (balanceForParsing.contains(",")) {
-				// take care of German number formatting
-				balanceForParsing = balanceForParsing.replaceAll("\\.", "").replaceAll(",", ".");
+		if (array != null) {
+			for (Object object : array) {
+				@SuppressWarnings("unchecked")
+				Map<String, String> fetched = (Map<String, String>) object;
+				String name = fetched.get("bezeichnung");
+				Account account = new Account(name);
+				String balanceAsString = fetched.get("saldo");
+				String balanceForParsing = balanceAsString;
+				if (balanceForParsing.contains(",")) {
+					// take care of the German number formatting of Hibiscus
+					balanceForParsing = balanceForParsing.replaceAll("\\.", "").replaceAll(",", ".");
+				}
+				account.setBalance(new BigDecimal(balanceForParsing));
+				String currency = fetched.get("waehrung");
+				account.setCurrency(currency);
+				String balanceDate = fetched.get("saldo_datum");
+				account.setBalanceDate(balanceDate);
+				ret.add(account);
 			}
-			account.setBalance(new BigDecimal(balanceForParsing));
-			String currency = fetched.get("waehrung");
-			account.setCurrency(currency);
-			String balanceDate = fetched.get("saldo_datum");
-			account.setBalanceDate(balanceDate);
-			ret.add(account);
 		}
 		
 		Collections.sort(ret);

@@ -5,7 +5,7 @@ import java.util.List;
 import org.zephyrsoft.hibiscuswatcher.model.Account;
 
 /**
- * Create a report.
+ * Create reports.
  * 
  * @author Mathis Dirksen-Thedens
  */
@@ -13,6 +13,10 @@ public class Reporter {
 	
 	private static final int SPACE_BETWEEN_COLUMNS = 3;
 	
+	/**
+	 * Create a report over all given accounts stating the name and the current balance for each one, plus one line at
+	 * the bottom containing the sum.
+	 */
 	public static String generateBalancesReport(List<Account> accounts) {
 		StringBuilder ret = new StringBuilder();
 		

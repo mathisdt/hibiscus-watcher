@@ -35,7 +35,7 @@ public class Starter {
 		} catch (CmdLineException e) {
 			System.err.println(e.getMessage());
 			parser.printUsage(System.err);
-			die(1, "");
+			die(null);
 		}
 		
 		// fetch data from Hibscus server
@@ -46,9 +46,11 @@ public class Starter {
 		System.out.println(Reporter.generateBalancesReport(accounts));
 	}
 	
-	public static void die(int statusCode, String message) {
-		System.err.println(message);
-		System.exit(statusCode);
+	public static void die(String message) {
+		if (message != null) {
+			System.err.println(message);
+		}
+		System.exit(1);
 	}
 	
 }
