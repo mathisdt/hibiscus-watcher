@@ -58,7 +58,7 @@ public class Reporter {
 			for (int i = 0; i < SPACE_BETWEEN_COLUMNS; i++) {
 				ret.append(" ");
 			}
-			if (balanceDate != null && !balanceDate.isEmpty()) {
+			if (isNotEmpty(balanceDate)) {
 				ret.append("(");
 				ret.append(balanceDate);
 				ret.append(")");
@@ -84,15 +84,15 @@ public class Reporter {
 			}
 			String currency = account.getCurrency();
 			ret.append(account.getName());
-			ret.append("\n");
+			ret.append("\nSaldo: ");
 			ret.append(account.getFormattedBalance());
 			String balanceDate = account.getBalanceDate();
-			if (balanceDate != null && !balanceDate.isEmpty()) {
-				ret.append("     (");
+			if (isNotEmpty(balanceDate)) {
+				ret.append(" (");
 				ret.append(balanceDate);
 				ret.append(")");
 			}
-			ret.append("\n");
+			ret.append("\n\n");
 			
 			for (Posting posting : account) {
 				ret.append(posting.getCounterpartName());
@@ -104,16 +104,20 @@ public class Reporter {
 				ret.append(posting.getNote());
 				ret.append("\n");
 				ret.append(Account.getFormattedBalance(posting.getAmount(), currency));
-				if (posting.getType() != null && !posting.getType().isEmpty()) {
-					ret.append("     (");
+				if (isNotEmpty(posting.getType())) {
+					ret.append(" (");
 					ret.append(posting.getType());
 					ret.append(")");
 				}
-				ret.append("\n");
+				ret.append("\n\n");
 			}
 			
 		}
 		
 		return ret.toString();
+	}
+	
+	private static boolean isNotEmpty(String in) {
+		return in != null && !in.isEmpty();
 	}
 }

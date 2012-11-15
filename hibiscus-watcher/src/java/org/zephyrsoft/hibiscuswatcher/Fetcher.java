@@ -152,17 +152,17 @@ public class Fetcher {
 		return ret;
 	}
 	
-	public List<Account> fetchAccountsWithPostings() {
+	public List<Account> fetchAccountsWithPostings(int daysToFetch) {
 		List<Account> ret = fetchAccountsWithBalances();
 		
 		XmlRpcClient client = createXmlRpcClient();
 		String methodName = "hibiscus.xmlrpc.umsatz.list";
 		
 		Map<String, String> params = new HashMap<String, String>();
-		GregorianCalendar oneWeekAgo = new GregorianCalendar();
-		oneWeekAgo.add(Calendar.DAY_OF_MONTH, -7);
+		GregorianCalendar beginOfPeriod = new GregorianCalendar();
+		beginOfPeriod.add(Calendar.DAY_OF_MONTH, -1 * daysToFetch);
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-		params.put("datum:min", sdf.format(oneWeekAgo.getTime()));
+		params.put("datum:min", sdf.format(beginOfPeriod.getTime()));
 		
 		Object result = null;
 		try {

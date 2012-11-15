@@ -15,6 +15,7 @@ public class Posting {
 	private String counterpartName;
 	private String counterpartAccountNumber;
 	private String counterpartBankCode;
+	private String postingDate;
 	
 	public BigDecimal getAmount() {
 		return amount;
@@ -62,6 +63,14 @@ public class Posting {
 	
 	public void setCounterpartBankCode(String counterpartBankCode) {
 		this.counterpartBankCode = counterpartBankCode;
+	}
+	
+	public String getPostingDate() {
+		return postingDate;
+	}
+	
+	public void setPostingDate(String postingDate) {
+		this.postingDate = postingDate;
 	}
 	
 }

@@ -24,9 +24,18 @@ public class Starter {
 		usage = "password to access the XML-RPC services at the given URL")
 	private String password = null;
 	
-	@Option(name = "--single", required = false,
-		usage = "get all single postings for all accounts and don't generate the balance report")
+	@Option(
+		name = "--single",
+		required = false,
+		usage = "get all single postings for all accounts and generate the more detailed postings report (which also contains the balances)")
 	private boolean singlePostings = false;
+	
+	@Option(
+		name = "--days",
+		required = false,
+		metaVar = "<DAYS>",
+		usage = "go back this amount of days for fetching the postings, e.g. 7 (the default) - this option is only effective in single postings mode!")
+	private int daysToFetchInSingleMode = 7;
 	
 	public static void main(String[] args) {
 		new Starter(args);
@@ -46,7 +55,7 @@ public class Starter {
 		
 		if (singlePostings) {
 			// fetch data from Hibscus server
-			List<Account> accounts = fetcher.fetchAccountsWithPostings();
+			List<Account> accounts = fetcher.fetchAccountsWithPostings(daysToFetchInSingleMode);
 			// generate report and print it to stdout
 			System.out.println(Reporter.generatePostingsReport(accounts));
 		} else {
