@@ -136,6 +136,7 @@ public class Fetcher {
 				Map<String, String> fetched = (Map<String, String>) object;
 				String name = fetched.get("bezeichnung");
 				Account account = new Account(name);
+				account.setNumber(fetched.get("kontonummer"));
 				String balanceAsString = fetched.get("saldo");
 				account.setBalance(parseBigDecimal(balanceAsString));
 				String currency = fetched.get("waehrung");
@@ -184,10 +185,26 @@ public class Fetcher {
 				posting.setCounterpartBankCode(fetched.get("empfaenger_blz"));
 				String amountAsString = fetched.get("betrag");
 				posting.setAmount(parseBigDecimal(amountAsString));
+				String accountId = fetched.get("konto_id ");
+				Account relatedAccount = findAccount(ret, accountId);
+				if (relatedAccount != null) {
+					relatedAccount.addPosting(posting);
+				} else {
+					System.err.println("account with ID " + accountId + " not found");
+				}
 			}
 		}
 		
 		return ret;
+	}
+	
+	private static Account findAccount(List<Account> accounts, String accountId) {
+		for (Account account : accounts) {
+			if (account.getNumber() != null && account.getNumber().contains(accountId)) {
+				return account;
+			}
+		}
+		return null;
 	}
 	
 }

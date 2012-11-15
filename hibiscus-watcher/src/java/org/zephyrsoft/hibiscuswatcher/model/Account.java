@@ -17,6 +17,7 @@ public class Account implements Comparable<Account>, Iterable<Posting> {
 	private static final int FRACTION_DIGITS = 2;
 	
 	private String name = "";
+	private String number = "";
 	private BigDecimal balance = new BigDecimal(0);
 	private String currency = "";
 	private String balanceDate = "";
@@ -52,6 +53,14 @@ public class Account implements Comparable<Account>, Iterable<Posting> {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getNumber() {
+		return number;
+	}
+	
+	public void setNumber(String number) {
+		this.number = number;
 	}
 	
 	public BigDecimal getBalance() {
