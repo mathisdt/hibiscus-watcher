@@ -1,6 +1,9 @@
 package org.zephyrsoft.hibiscuswatcher;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import org.zephyrsoft.hibiscuswatcher.model.Account;
 import org.zephyrsoft.hibiscuswatcher.model.Posting;
@@ -125,7 +128,7 @@ public class Reporter {
 					ret.append(", ");
 				}
 				if (isNotEmpty(date)) {
-					ret.append(date);
+					ret.append(formatDate(date));
 				}
 				if (isNotEmpty(type) || isNotEmpty(date)) {
 					ret.append(")");
@@ -136,6 +139,17 @@ public class Reporter {
 		}
 		
 		return ret.toString();
+	}
+	
+	private static String formatDate(String in) {
+		SimpleDateFormat sdfIn = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdfOut = new SimpleDateFormat("dd.MM.yyyy");
+		try {
+			Date out = sdfIn.parse(in);
+			return sdfOut.format(out);
+		} catch (ParseException e) {
+			return in;
+		}
 	}
 	
 	private static boolean isNotEmpty(String in) {
