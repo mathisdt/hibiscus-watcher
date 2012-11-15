@@ -185,7 +185,7 @@ public class Fetcher {
 				posting.setCounterpartBankCode(fetched.get("empfaenger_blz"));
 				String amountAsString = fetched.get("betrag");
 				posting.setAmount(parseBigDecimal(amountAsString));
-				String accountId = fetched.get("konto_id ");
+				String accountId = fetched.get("konto_id");
 				Account relatedAccount = findAccount(ret, accountId);
 				if (relatedAccount != null) {
 					relatedAccount.addPosting(posting);
