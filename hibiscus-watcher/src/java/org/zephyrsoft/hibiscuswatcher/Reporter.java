@@ -80,7 +80,7 @@ public class Reporter {
 			if (isFirst) {
 				isFirst = false;
 			} else {
-				ret.append("\n- - - - - - - - - - - - - - - - - -\n\n");
+				ret.append("- - - - - - - - - - - - - - - - - -\n\n");
 			}
 			String currency = account.getCurrency();
 			ret.append(account.getName());
@@ -95,18 +95,39 @@ public class Reporter {
 			ret.append("\n\n");
 			
 			for (Posting posting : account) {
-				ret.append(posting.getCounterpartName());
-				ret.append(" (");
-				ret.append(posting.getCounterpartAccountNumber());
-				ret.append(" / ");
-				ret.append(posting.getCounterpartBankCode());
-				ret.append(")\n");
-				ret.append(posting.getNote());
-				ret.append("\n");
-				ret.append(Account.getFormattedBalance(posting.getAmount(), currency));
-				if (isNotEmpty(posting.getType())) {
+				String counterpartName = posting.getCounterpartName();
+				String counterpartAccountNumber = posting.getCounterpartAccountNumber();
+				String counterpartBankCode = posting.getCounterpartBankCode();
+				if (isNotEmpty(counterpartName) || isNotEmpty(counterpartAccountNumber)
+					|| isNotEmpty(counterpartBankCode)) {
+					ret.append(counterpartName);
 					ret.append(" (");
-					ret.append(posting.getType());
+					ret.append(counterpartAccountNumber);
+					ret.append(" / ");
+					ret.append(counterpartBankCode);
+					ret.append(")\n");
+				}
+				String note = posting.getNote();
+				if (isNotEmpty(note)) {
+					ret.append(note);
+					ret.append("\n");
+				}
+				ret.append(Account.getFormattedBalance(posting.getAmount(), currency));
+				String type = posting.getType();
+				String date = posting.getPostingDate();
+				if (isNotEmpty(type) || isNotEmpty(date)) {
+					ret.append(" (");
+				}
+				if (isNotEmpty(type)) {
+					ret.append(type);
+				}
+				if (isNotEmpty(type) && isNotEmpty(date)) {
+					ret.append(", ");
+				}
+				if (isNotEmpty(date)) {
+					ret.append(date);
+				}
+				if (isNotEmpty(type) || isNotEmpty(date)) {
 					ret.append(")");
 				}
 				ret.append("\n\n");

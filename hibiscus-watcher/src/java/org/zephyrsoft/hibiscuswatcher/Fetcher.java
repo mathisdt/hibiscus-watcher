@@ -180,6 +180,7 @@ public class Fetcher {
 				Posting posting = new Posting();
 				posting.setType(fetched.get("art"));
 				posting.setNote(fetched.get("zweck"));
+				posting.setPostingDate(fetched.get("datum"));
 				posting.setCounterpartName(fetched.get("empfaenger_name"));
 				posting.setCounterpartAccountNumber(fetched.get("empfaenger_konto"));
 				posting.setCounterpartBankCode(fetched.get("empfaenger_blz"));
