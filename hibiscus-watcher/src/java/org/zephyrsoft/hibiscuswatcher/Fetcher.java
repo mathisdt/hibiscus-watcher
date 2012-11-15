@@ -134,7 +134,6 @@ public class Fetcher {
 			for (Object object : array) {
 				@SuppressWarnings("unchecked")
 				Map<String, String> fetched = (Map<String, String>) object;
-				System.err.println(fetched);
 				String name = fetched.get("bezeichnung");
 				Account account = new Account(name);
 				account.setID(fetched.get("id"));
