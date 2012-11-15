@@ -45,7 +45,10 @@ public class Starter {
 		Fetcher fetcher = new Fetcher(url, username, password);
 		
 		if (singlePostings) {
-			
+			// fetch data from Hibscus server
+			List<Account> accounts = fetcher.fetchAccountsWithPostings();
+			// generate report and print it to stdout
+			System.out.println(Reporter.generatePostingsReport(accounts));
 		} else {
 			// fetch data from Hibscus server
 			List<Account> accounts = fetcher.fetchAccountsWithBalances();

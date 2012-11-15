@@ -11,6 +11,7 @@ public class Posting {
 	
 	private BigDecimal amount;
 	private String type;
+	private String note;
 	private String counterpartName;
 	private String counterpartAccountNumber;
 	private String counterpartBankCode;
@@ -29,6 +30,14 @@ public class Posting {
 	
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	public String getNote() {
+		return note;
+	}
+	
+	public void setNote(String note) {
+		this.note = note;
 	}
 	
 	public String getCounterpartName() {

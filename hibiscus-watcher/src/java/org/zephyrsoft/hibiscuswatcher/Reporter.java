@@ -3,6 +3,7 @@ package org.zephyrsoft.hibiscuswatcher;
 import java.math.BigDecimal;
 import java.util.List;
 import org.zephyrsoft.hibiscuswatcher.model.Account;
+import org.zephyrsoft.hibiscuswatcher.model.Posting;
 
 /**
  * Create reports.
@@ -63,6 +64,54 @@ public class Reporter {
 				ret.append(")");
 			}
 			ret.append("\n");
+		}
+		
+		return ret.toString();
+	}
+	
+	/**
+	 * Generate a report over all given accounts stating the name, the balance and all available postings.
+	 */
+	public static String generatePostingsReport(List<Account> accounts) {
+		StringBuilder ret = new StringBuilder();
+		
+		boolean isFirst = true;
+		for (Account account : accounts) {
+			if (isFirst) {
+				isFirst = false;
+			} else {
+				ret.append("\n- - - - - - - - - - - - - - - - - -\n\n");
+			}
+			String currency = account.getCurrency();
+			ret.append(account.getName());
+			ret.append("\n");
+			ret.append(account.getFormattedBalance());
+			String balanceDate = account.getBalanceDate();
+			if (balanceDate != null && !balanceDate.isEmpty()) {
+				ret.append("     (");
+				ret.append(balanceDate);
+				ret.append(")");
+			}
+			ret.append("\n");
+			
+			for (Posting posting : account) {
+				ret.append(posting.getCounterpartName());
+				ret.append(" (");
+				ret.append(posting.getCounterpartAccountNumber());
+				ret.append(" / ");
+				ret.append(posting.getCounterpartBankCode());
+				ret.append(")\n");
+				ret.append(posting.getNote());
+				ret.append("\n");
+				ret.append(Account.getFormattedBalance(posting.getAmount(), currency));
+				if (posting.getType() != null && !posting.getType().isEmpty()) {
+					ret.append("     (");
+					ret.append(posting.getType());
+					ret.append(")");
+				}
+				ret.append("\n");
+			}
+			
 		}
 		
 		return ret.toString();

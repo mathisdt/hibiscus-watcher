@@ -26,26 +26,26 @@ public class Account implements Comparable<Account>, Iterable<Posting> {
 		setName(name);
 	}
 	
-	public boolean add(Posting arg0) {
+	public boolean addPosting(Posting arg0) {
 		return postings.add(arg0);
 	}
-
+	
 	public void clearPostings() {
 		postings.clear();
 	}
-
+	
 	public Posting getPosting(int arg0) {
 		return postings.get(arg0);
 	}
-
+	
 	public boolean hasPostings() {
 		return !postings.isEmpty();
 	}
-
-	public int postingsSize() {
+	
+	public int postingsCount() {
 		return postings.size();
 	}
-
+	
 	public String getName() {
 		return name;
 	}
@@ -59,8 +59,12 @@ public class Account implements Comparable<Account>, Iterable<Posting> {
 	}
 	
 	public String getFormattedBalance() {
+		return getFormattedBalance(balance, currency);
+	}
+	
+	public static String getFormattedBalance(BigDecimal amount, String currency) {
 		NumberFormat df = new DecimalFormat("0.00");
-		return df.format(balance.setScale(FRACTION_DIGITS, BigDecimal.ROUND_HALF_UP)) + " " + currency;
+		return df.format(amount.setScale(FRACTION_DIGITS, BigDecimal.ROUND_HALF_UP)) + " " + currency;
 	}
 	
 	public void setBalance(BigDecimal balance) {
@@ -93,7 +97,7 @@ public class Account implements Comparable<Account>, Iterable<Posting> {
 			return getName().compareTo(o.getName());
 		}
 	}
-
+	
 	@Override
 	public Iterator<Posting> iterator() {
 		return postings.iterator();

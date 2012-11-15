@@ -25,6 +25,7 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.zephyrsoft.hibiscuswatcher.model.Account;
+import org.zephyrsoft.hibiscuswatcher.model.Posting;
 
 /**
  * Fetch information from Hibiscus.
@@ -107,6 +108,14 @@ public class Fetcher {
 		HttpsURLConnection.setDefaultHostnameVerifier(dummy2);
 	}
 	
+	private static BigDecimal parseBigDecimal(String in) {
+		if (in.contains(",")) {
+			// take care of the German number formatting of Hibiscus
+			in = in.replaceAll("\\.", "").replaceAll(",", ".");
+		}
+		return new BigDecimal(in);
+	}
+	
 	public List<Account> fetchAccountsWithBalances() {
 		List<Account> ret = new ArrayList<Account>();
 		
@@ -128,12 +137,7 @@ public class Fetcher {
 				String name = fetched.get("bezeichnung");
 				Account account = new Account(name);
 				String balanceAsString = fetched.get("saldo");
-				String balanceForParsing = balanceAsString;
-				if (balanceForParsing.contains(",")) {
-					// take care of the German number formatting of Hibiscus
-					balanceForParsing = balanceForParsing.replaceAll("\\.", "").replaceAll(",", ".");
-				}
-				account.setBalance(new BigDecimal(balanceForParsing));
+				account.setBalance(parseBigDecimal(balanceAsString));
 				String currency = fetched.get("waehrung");
 				account.setCurrency(currency);
 				String balanceDate = fetched.get("saldo_datum");
@@ -172,7 +176,14 @@ public class Fetcher {
 			for (Object object : array) {
 				@SuppressWarnings("unchecked")
 				Map<String, String> fetched = (Map<String, String>) object;
-				// TODO
+				Posting posting = new Posting();
+				posting.setType(fetched.get("art"));
+				posting.setNote(fetched.get("zweck"));
+				posting.setCounterpartName(fetched.get("empfaenger_name"));
+				posting.setCounterpartAccountNumber(fetched.get("empfaenger_konto"));
+				posting.setCounterpartBankCode(fetched.get("empfaenger_blz"));
+				String amountAsString = fetched.get("betrag");
+				posting.setAmount(parseBigDecimal(amountAsString));
 			}
 		}
 		
