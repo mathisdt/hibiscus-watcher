@@ -134,9 +134,10 @@ public class Fetcher {
 			for (Object object : array) {
 				@SuppressWarnings("unchecked")
 				Map<String, String> fetched = (Map<String, String>) object;
+				System.err.println(fetched);
 				String name = fetched.get("bezeichnung");
 				Account account = new Account(name);
-				account.setNumber(fetched.get("kontonummer"));
+				account.setID(fetched.get("konto_id"));
 				String balanceAsString = fetched.get("saldo");
 				account.setBalance(parseBigDecimal(balanceAsString));
 				String currency = fetched.get("waehrung");
@@ -200,7 +201,7 @@ public class Fetcher {
 	
 	private static Account findAccount(List<Account> accounts, String accountId) {
 		for (Account account : accounts) {
-			if (account.getNumber() != null && account.getNumber().contains(accountId)) {
+			if (account.getID() != null && account.getID().equals(accountId)) {
 				return account;
 			}
 		}
