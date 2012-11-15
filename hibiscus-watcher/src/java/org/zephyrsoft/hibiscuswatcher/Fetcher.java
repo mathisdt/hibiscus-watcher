@@ -137,7 +137,7 @@ public class Fetcher {
 				System.err.println(fetched);
 				String name = fetched.get("bezeichnung");
 				Account account = new Account(name);
-				account.setID(fetched.get("konto_id"));
+				account.setID(fetched.get("id"));
 				String balanceAsString = fetched.get("saldo");
 				account.setBalance(parseBigDecimal(balanceAsString));
 				String currency = fetched.get("waehrung");
