@@ -24,6 +24,10 @@ public class Starter {
 		usage = "password to access the XML-RPC services at the given URL")
 	private String password = null;
 	
+	@Option(name = "--single", required = false,
+		usage = "get all single postings for all accounts and don't generate the balance report")
+	private boolean singlePostings = false;
+	
 	public static void main(String[] args) {
 		new Starter(args);
 	}
@@ -38,12 +42,16 @@ public class Starter {
 			die(null);
 		}
 		
-		// fetch data from Hibscus server
 		Fetcher fetcher = new Fetcher(url, username, password);
-		List<Account> accounts = fetcher.fetchAccountsWithBalances();
 		
-		// generate report and print it to stdout
-		System.out.println(Reporter.generateBalancesReport(accounts));
+		if (singlePostings) {
+			
+		} else {
+			// fetch data from Hibscus server
+			List<Account> accounts = fetcher.fetchAccountsWithBalances();
+			// generate report and print it to stdout
+			System.out.println(Reporter.generateBalancesReport(accounts));
+		}
 	}
 	
 	public static void die(String message) {

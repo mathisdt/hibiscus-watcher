@@ -3,13 +3,16 @@ package org.zephyrsoft.hibiscuswatcher.model;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A bank account.
  * 
  * @author Mathis Dirksen-Thedens
  */
-public class Account implements Comparable<Account> {
+public class Account implements Comparable<Account>, Iterable<Posting> {
 	
 	private static final int FRACTION_DIGITS = 2;
 	
@@ -17,11 +20,32 @@ public class Account implements Comparable<Account> {
 	private BigDecimal balance = new BigDecimal(0);
 	private String currency = "";
 	private String balanceDate = "";
+	private List<Posting> postings = new LinkedList<Posting>();
 	
 	public Account(String name) {
 		setName(name);
 	}
 	
+	public boolean add(Posting arg0) {
+		return postings.add(arg0);
+	}
+
+	public void clearPostings() {
+		postings.clear();
+	}
+
+	public Posting getPosting(int arg0) {
+		return postings.get(arg0);
+	}
+
+	public boolean hasPostings() {
+		return !postings.isEmpty();
+	}
+
+	public int postingsSize() {
+		return postings.size();
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -68,6 +92,11 @@ public class Account implements Comparable<Account> {
 		} else {
 			return getName().compareTo(o.getName());
 		}
+	}
+
+	@Override
+	public Iterator<Posting> iterator() {
+		return postings.iterator();
 	}
 	
 }
