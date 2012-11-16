@@ -37,6 +37,14 @@ public class Starter {
 		usage = "go back this amount of days for fetching the postings, e.g. 7 (the default) - this option is only effective in single postings mode!")
 	private int daysToFetchInSingleMode = 7;
 	
+	@Option(name = "--no-positive", required = false,
+		usage = "do not get single postings which contain a positive amount of money")
+	private boolean noPositive = false;
+	
+	@Option(name = "--no-negative", required = false,
+		usage = "do not get single postings which contain a negative amount of money")
+	private boolean noNegative = false;
+	
 	public static void main(String[] args) {
 		new Starter(args);
 	}
@@ -55,7 +63,7 @@ public class Starter {
 		
 		if (singlePostings) {
 			// fetch data from Hibscus server
-			List<Account> accounts = fetcher.fetchAccountsWithPostings(daysToFetchInSingleMode);
+			List<Account> accounts = fetcher.fetchAccountsWithPostings(daysToFetchInSingleMode, noPositive, noNegative);
 			// generate report and print it to stdout
 			System.out.println(Reporter.generatePostingsReport(accounts));
 		} else {

@@ -152,7 +152,7 @@ public class Fetcher {
 		return ret;
 	}
 	
-	public List<Account> fetchAccountsWithPostings(int daysToFetch) {
+	public List<Account> fetchAccountsWithPostings(int daysToFetch, boolean noPositive, boolean noNegative) {
 		List<Account> ret = fetchAccountsWithBalances();
 		
 		XmlRpcClient client = createXmlRpcClient();
@@ -177,6 +177,13 @@ public class Fetcher {
 			for (Object object : array) {
 				@SuppressWarnings("unchecked")
 				Map<String, String> fetched = (Map<String, String>) object;
+				String amountAsString = fetched.get("betrag");
+				BigDecimal amount = parseBigDecimal(amountAsString);
+				if ((noPositive && amount.signum() == 1) || (noNegative && amount.signum() == -1)) {
+					// do not include this posting
+					// (although the effect of this posting will stay visible in the balance)
+					continue;
+				}
 				Posting posting = new Posting();
 				posting.setType(fetched.get("art"));
 				posting.setNote(fetched.get("zweck"));
@@ -184,8 +191,7 @@ public class Fetcher {
 				posting.setCounterpartName(fetched.get("empfaenger_name"));
 				posting.setCounterpartAccountNumber(fetched.get("empfaenger_konto"));
 				posting.setCounterpartBankCode(fetched.get("empfaenger_blz"));
-				String amountAsString = fetched.get("betrag");
-				posting.setAmount(parseBigDecimal(amountAsString));
+				posting.setAmount(amount);
 				String accountId = fetched.get("konto_id");
 				Account relatedAccount = findAccount(ret, accountId);
 				if (relatedAccount != null) {
