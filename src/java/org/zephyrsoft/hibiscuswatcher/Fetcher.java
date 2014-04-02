@@ -15,12 +15,14 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
@@ -89,7 +91,7 @@ public class Fetcher {
 		try {
 			sc = SSLContext.getInstance("SSL");
 			try {
-				sc.init(null, new TrustManager[] {dummy}, new SecureRandom());
+				sc.init(null, new TrustManager[] { dummy }, new SecureRandom());
 			} catch (KeyManagementException e) {
 				e.printStackTrace();
 				Starter.die("key error");
@@ -117,7 +119,7 @@ public class Fetcher {
 	}
 	
 	public List<Account> fetchAccountsWithBalances() {
-		List<Account> ret = new ArrayList<Account>();
+		List<Account> ret = new ArrayList<>();
 		
 		XmlRpcClient client = createXmlRpcClient();
 		String methodName = "hibiscus.xmlrpc.konto.find";
@@ -158,7 +160,7 @@ public class Fetcher {
 		XmlRpcClient client = createXmlRpcClient();
 		String methodName = "hibiscus.xmlrpc.umsatz.list";
 		
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		GregorianCalendar beginOfPeriod = new GregorianCalendar();
 		beginOfPeriod.add(Calendar.DAY_OF_MONTH, -1 * daysToFetch);
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
@@ -166,7 +168,7 @@ public class Fetcher {
 		
 		Object result = null;
 		try {
-			result = client.execute(methodName, new Object[] {params});
+			result = client.execute(methodName, new Object[] { params });
 		} catch (XmlRpcException e) {
 			e.printStackTrace();
 			Starter.die("xml-rpc error while executing service " + methodName);

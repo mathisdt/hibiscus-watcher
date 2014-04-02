@@ -21,7 +21,7 @@ public class Account implements Comparable<Account>, Iterable<Posting> {
 	private BigDecimal balance = new BigDecimal(0);
 	private String currency = "";
 	private String balanceDate = "";
-	private List<Posting> postings = new LinkedList<Posting>();
+	private List<Posting> postings = new LinkedList<>();
 	
 	public Account(String name) {
 		setName(name);
