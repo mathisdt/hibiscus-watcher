@@ -69,7 +69,7 @@
 		<fileset id="runtimeclasspathref" dir="${lib.dir}" includes="${runtimeclasspath}" />
 
 		<!-- compile java source files-->
-		<javac destdir="${bin.dir}" classpathref="classpathref" target="1.6" includeantruntime="false">
+		<javac destdir="${bin.dir}" classpathref="classpathref" target="1.7" source="1.7" includeantruntime="false">
 			<src>
 				<pathelement path="${src.java.dir}" />
 			</src>
