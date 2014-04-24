@@ -15,6 +15,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -23,6 +25,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
@@ -35,6 +38,9 @@ import org.zephyrsoft.hibiscuswatcher.model.Posting;
  * @author Mathis Dirksen-Thedens
  */
 public class Fetcher {
+	
+	private static final String REGEX_IBAN = "I\\s*B\\s*A\\s*N\\s*:\\s*([A-Z]\\s*[A-Z]\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*)";
+	private static final String REGEX_BIC = "B\\s*I\\s*C\\s*:\\s*(\\w\\s*\\w\\s*\\w\\s*\\w\\s*\\w\\s*\\w\\s*\\w\\s*\\w\\s*\\w?+\\s*+\\w?+\\s*+\\w?+\\s*+)";
 	
 	private final String url;
 	private final String username;
@@ -189,11 +195,19 @@ public class Fetcher {
 				}
 				Posting posting = new Posting();
 				posting.setType(fetched.get("art"));
-				posting.setNote(fetched.get("zweck"));
+				String note = fetched.get("zweck");
+				posting.setNote(note);
 				posting.setPostingDate(fetched.get("datum"));
 				posting.setCounterpartName(fetched.get("empfaenger_name"));
-				posting.setCounterpartAccountNumber(fetched.get("empfaenger_konto"));
-				posting.setCounterpartBankCode(fetched.get("empfaenger_blz"));
+				String counterpartAccountNumber = fetched.get("empfaenger_konto");
+				String counterpartBankCode = fetched.get("empfaenger_blz");
+				if (StringUtils.isAnyEmpty(counterpartAccountNumber, counterpartBankCode)) {
+					// try to extract IBAN and BIC from note
+					counterpartAccountNumber = find(REGEX_IBAN, note);
+					counterpartBankCode = find(REGEX_BIC, note);
+				}
+				posting.setCounterpartAccountNumber(counterpartAccountNumber);
+				posting.setCounterpartBankCode(counterpartBankCode);
 				posting.setAmount(amount);
 				String accountId = fetched.get("konto_id");
 				Account relatedAccount = findAccount(ret, accountId);
@@ -206,6 +220,15 @@ public class Fetcher {
 		}
 		
 		return ret;
+	}
+	
+	private String find(String regex, String haystack) {
+		Matcher matcher = Pattern.compile(regex).matcher(haystack);
+		if (!matcher.find(0)) {
+			return "";
+		} else {
+			return matcher.group(1).replaceAll("\\s", "");
+		}
 	}
 	
 	private static Account findAccount(List<Account> accounts, String accountId) {

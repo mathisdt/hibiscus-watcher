@@ -131,4 +131,8 @@ public class Account implements Comparable<Account>, Iterable<Posting> {
 		return postings.iterator();
 	}
 	
+	public int getPostingCount() {
+		return postings.size();
+	}
+	
 }

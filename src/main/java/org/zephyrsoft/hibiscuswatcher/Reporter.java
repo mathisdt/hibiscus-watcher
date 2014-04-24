@@ -84,7 +84,7 @@ public class Reporter {
 			if (isFirst) {
 				isFirst = false;
 			} else {
-				ret.append("- - - - - - - - - - - - - - - - - -\n\n");
+				ret.append("===================================\n\n");
 			}
 			String currency = account.getCurrency();
 			ret.append(account.getDisplayName());
@@ -96,7 +96,7 @@ public class Reporter {
 				ret.append(balanceDate);
 				ret.append(")");
 			}
-			ret.append("\n\n");
+			ret.append("\n\n- - - - - - - - - - - - - - - - - -\n\n");
 			
 			for (Posting posting : account) {
 				ret.append(posting.getCounterpart());
@@ -126,6 +126,10 @@ public class Reporter {
 					ret.append(")");
 				}
 				ret.append("\n\n");
+			}
+			
+			if (account.getPostingCount() == 0) {
+				ret.append("no changes\n\n");
 			}
 			
 		}
