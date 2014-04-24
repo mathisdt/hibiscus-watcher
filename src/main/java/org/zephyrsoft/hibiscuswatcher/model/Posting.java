@@ -2,6 +2,8 @@ package org.zephyrsoft.hibiscuswatcher.model;
 
 import java.math.BigDecimal;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Posting on a bank account.
  * 
@@ -63,6 +65,29 @@ public class Posting {
 	
 	public void setCounterpartBankCode(String counterpartBankCode) {
 		this.counterpartBankCode = counterpartBankCode;
+	}
+	
+	public String getCounterpart() {
+		if (StringUtils.isEmpty(counterpartName) && StringUtils.isEmpty(counterpartBankCode)
+			&& StringUtils.isEmpty(counterpartAccountNumber)) {
+			return "";
+		}
+		StringBuilder ret = new StringBuilder();
+		if (StringUtils.isNotEmpty(counterpartName)) {
+			ret.append(counterpartName);
+			ret.append(" ");
+		}
+		if (StringUtils.isNotEmpty(counterpartAccountNumber)) {
+			ret.append("(");
+			ret.append(counterpartAccountNumber != null ? counterpartAccountNumber : "");
+			if (StringUtils.isNotEmpty(counterpartAccountNumber) && StringUtils.isNotEmpty(counterpartBankCode)) {
+				ret.append(" / ");
+			}
+			ret.append(counterpartBankCode != null ? counterpartBankCode : "");
+			ret.append(")");
+		}
+		
+		return ret.toString();
 	}
 	
 	public String getPostingDate() {

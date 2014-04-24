@@ -136,8 +136,9 @@ public class Fetcher {
 			for (Object object : array) {
 				@SuppressWarnings("unchecked")
 				Map<String, String> fetched = (Map<String, String>) object;
-				String name = fetched.get("bezeichnung");
-				Account account = new Account(name);
+				String name = fetched.get("name");
+				String iban = fetched.get("iban");
+				Account account = new Account(name, iban);
 				account.setID(fetched.get("id"));
 				String balanceAsString = fetched.get("saldo");
 				account.setBalance(parseBigDecimal(balanceAsString));

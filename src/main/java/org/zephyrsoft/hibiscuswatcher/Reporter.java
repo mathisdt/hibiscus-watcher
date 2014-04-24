@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
 import org.zephyrsoft.hibiscuswatcher.model.Account;
 import org.zephyrsoft.hibiscuswatcher.model.Posting;
 
@@ -29,7 +30,7 @@ public class Reporter {
 		BigDecimal sum = new BigDecimal(0);
 		String currency = "";
 		for (Account account : accounts) {
-			String name = account.getName();
+			String name = account.getDisplayName();
 			if (name != null) {
 				maxNameLength = Math.max(name.length(), maxNameLength);
 			}
@@ -42,13 +43,13 @@ public class Reporter {
 			currency = account.getCurrency();
 		}
 		
-		Account sumAccount = new Account("");
+		Account sumAccount = new Account("", "");
 		sumAccount.setBalance(sum);
 		sumAccount.setCurrency(currency);
 		accounts.add(sumAccount);
 		
 		for (Account account : accounts) {
-			String name = account.getName();
+			String name = account.getDisplayName();
 			String formattedBalance = account.getFormattedBalance();
 			String balanceDate = account.getBalanceDate();
 			
@@ -86,7 +87,7 @@ public class Reporter {
 				ret.append("- - - - - - - - - - - - - - - - - -\n\n");
 			}
 			String currency = account.getCurrency();
-			ret.append(account.getName());
+			ret.append(account.getDisplayName());
 			ret.append("\nSaldo: ");
 			ret.append(account.getFormattedBalance());
 			String balanceDate = account.getBalanceDate();
@@ -98,18 +99,9 @@ public class Reporter {
 			ret.append("\n\n");
 			
 			for (Posting posting : account) {
-				String counterpartName = posting.getCounterpartName();
-				String counterpartAccountNumber = posting.getCounterpartAccountNumber();
-				String counterpartBankCode = posting.getCounterpartBankCode();
-				if (isNotEmpty(counterpartName) || isNotEmpty(counterpartAccountNumber)
-					|| isNotEmpty(counterpartBankCode)) {
-					ret.append(counterpartName);
-					ret.append(" (");
-					ret.append(counterpartAccountNumber);
-					ret.append(" / ");
-					ret.append(counterpartBankCode);
-					ret.append(")\n");
-				}
+				ret.append(posting.getCounterpart());
+				ret.append("\n");
+				
 				String note = posting.getNote();
 				if (isNotEmpty(note)) {
 					ret.append(note);
