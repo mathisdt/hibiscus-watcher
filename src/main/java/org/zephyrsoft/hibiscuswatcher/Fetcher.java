@@ -195,17 +195,21 @@ public class Fetcher {
 				}
 				Posting posting = new Posting();
 				posting.setType(fetched.get("art"));
-				String note = fetched.get("zweck");
-				posting.setNote(note);
 				posting.setPostingDate(fetched.get("datum"));
 				posting.setCounterpartName(fetched.get("empfaenger_name"));
+				String note = fetched.get("zweck");
 				String counterpartAccountNumber = fetched.get("empfaenger_konto");
 				String counterpartBankCode = fetched.get("empfaenger_blz");
 				if (StringUtils.isAnyEmpty(counterpartAccountNumber, counterpartBankCode)) {
 					// try to extract IBAN and BIC from note
 					counterpartAccountNumber = find(REGEX_IBAN, note);
 					counterpartBankCode = find(REGEX_BIC, note);
+					// remove IBAN and BIC from note
+					note = note.replaceAll(REGEX_IBAN, "");
+					note = note.replaceAll(REGEX_BIC, "");
+					note = note.replaceAll("\\s{2,}", " ");
 				}
+				posting.setNote(note);
 				posting.setCounterpartAccountNumber(counterpartAccountNumber);
 				posting.setCounterpartBankCode(counterpartBankCode);
 				posting.setAmount(amount);
