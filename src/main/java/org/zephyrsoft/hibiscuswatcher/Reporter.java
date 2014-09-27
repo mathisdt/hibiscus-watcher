@@ -74,6 +74,63 @@ public class Reporter {
 	}
 	
 	/**
+	 * Create output only if the given account's balance is less than the minimum.
+	 */
+	public static String generateLowReport(List<Account> accounts, String targetAccount, Double minimumBalance) {
+		
+		StringBuilder ret = new StringBuilder();
+		
+		int maxNameLength = 0;
+		int maxFormattedBalanceLength = 0;
+		for (Account account : accounts) {
+			if (!isUnderMinimum(account, minimumBalance)) {
+				continue;
+			}
+			
+			String name = account.getDisplayName();
+			if (name != null) {
+				maxNameLength = Math.max(name.length(), maxNameLength);
+			}
+			String formattedBalance = account.getFormattedBalance();
+			if (formattedBalance != null) {
+				maxFormattedBalanceLength = Math.max(formattedBalance.length(), maxFormattedBalanceLength);
+			}
+		}
+		
+		for (Account account : accounts) {
+			if (!isUnderMinimum(account, minimumBalance)) {
+				continue;
+			}
+			
+			String name = account.getDisplayName();
+			String formattedBalance = account.getFormattedBalance();
+			String balanceDate = account.getBalanceDate();
+			
+			ret.append(name);
+			for (int i = 0; i < maxNameLength - name.length() + SPACE_BETWEEN_COLUMNS + maxFormattedBalanceLength
+				- formattedBalance.length(); i++) {
+				ret.append(" ");
+			}
+			ret.append(formattedBalance);
+			for (int i = 0; i < SPACE_BETWEEN_COLUMNS; i++) {
+				ret.append(" ");
+			}
+			if (isNotEmpty(balanceDate)) {
+				ret.append("(");
+				ret.append(balanceDate);
+				ret.append(")");
+			}
+			ret.append("\n");
+		}
+		
+		return ret.toString();
+	}
+	
+	private static boolean isUnderMinimum(Account account, Double minimumBalance) {
+		return account.getBalance().doubleValue() <= minimumBalance.doubleValue();
+	}
+	
+	/**
 	 * Generate a report over all given accounts stating the name, the balance and all available postings.
 	 */
 	public static String generatePostingsReport(List<Account> accounts) {

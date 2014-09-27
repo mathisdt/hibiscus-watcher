@@ -1,6 +1,7 @@
 package org.zephyrsoft.hibiscuswatcher;
 
 import java.util.List;
+
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -27,8 +28,32 @@ public class Starter {
 	@Option(
 		name = "--single",
 		required = false,
-		usage = "get all single postings for all accounts and generate the more detailed postings report (which also contains the balances)")
+		usage = "get all single postings of all accounts and generate the more detailed postings report (which also contains the balances)")
 	private boolean singlePostings = false;
+	
+	@Option(
+		name = "--balances",
+		required = false,
+		usage = "get the balances of all accounts")
+	private boolean balances = false;
+	
+	@Option(
+		name = "--low",
+		required = false,
+		usage = "check if the balance of an account is below a minimum account")
+	private boolean lowBalance = false;
+	
+	@Option(name = "--low-account",
+		required = false,
+		metaVar = "<ACCOUNT>",
+		usage = "account for --low")
+	private String lowAccount = null;
+	
+	@Option(name = "--low-minimum",
+		required = false,
+		metaVar = "<WHOLE NUMBER>",
+		usage = "minimum amount for --low")
+	private Double lowMinimum = null;
 	
 	@Option(
 		name = "--days",
@@ -66,11 +91,20 @@ public class Starter {
 			List<Account> accounts = fetcher.fetchAccountsWithPostings(daysToFetchInSingleMode, noPositive, noNegative);
 			// generate report and print it to stdout
 			System.out.println(Reporter.generatePostingsReport(accounts));
-		} else {
+		}
+		
+		if (balances) {
 			// fetch data from Hibscus server
 			List<Account> accounts = fetcher.fetchAccountsWithBalances();
 			// generate report and print it to stdout
 			System.out.println(Reporter.generateBalancesReport(accounts));
+		}
+		
+		if (lowBalance) {
+			// fetch data from Hibscus server
+			List<Account> accounts = fetcher.fetchAccountsWithBalances();
+			// generate report and print it to stdout
+			System.out.println(Reporter.generateLowReport(accounts, lowAccount, lowMinimum));
 		}
 	}
 	
