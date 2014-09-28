@@ -46,8 +46,8 @@ public class Starter {
 	@Option(name = "--low-account",
 		required = false,
 		metaVar = "<ACCOUNT>",
-		usage = "account for --low")
-	private String lowAccount = null;
+		usage = "account(s) for --low (multiple times allowed)")
+	private List<String> lowAccounts = null;
 	
 	@Option(name = "--low-minimum",
 		required = false,
@@ -104,7 +104,7 @@ public class Starter {
 			// fetch data from Hibscus server
 			List<Account> accounts = fetcher.fetchAccountsWithBalances();
 			// generate report and print it to stdout
-			System.out.println(Reporter.generateLowReport(accounts, lowAccount, lowMinimum));
+			System.out.println(Reporter.generateLowReport(accounts, lowAccounts, lowMinimum));
 		}
 	}
 	

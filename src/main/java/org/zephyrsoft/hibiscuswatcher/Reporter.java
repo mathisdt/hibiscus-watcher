@@ -76,14 +76,14 @@ public class Reporter {
 	/**
 	 * Create output only if the given account's balance is less than the minimum.
 	 */
-	public static String generateLowReport(List<Account> accounts, String targetAccount, Double minimumBalance) {
+	public static String generateLowReport(List<Account> accounts, List<String> targetAccounts, Double minimumBalance) {
 		
 		StringBuilder ret = new StringBuilder();
 		
 		int maxNameLength = 0;
 		int maxFormattedBalanceLength = 0;
 		for (Account account : accounts) {
-			if (!isUnderMinimum(account, minimumBalance)) {
+			if (!isUnderMinimum(account, minimumBalance) || !targetAccounts.contains(account.getIban())) {
 				continue;
 			}
 			
@@ -98,7 +98,7 @@ public class Reporter {
 		}
 		
 		for (Account account : accounts) {
-			if (!isUnderMinimum(account, minimumBalance)) {
+			if (!isUnderMinimum(account, minimumBalance) || !targetAccounts.contains(account.getIban())) {
 				continue;
 			}
 			
