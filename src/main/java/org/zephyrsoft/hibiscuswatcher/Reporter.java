@@ -22,31 +22,30 @@ public class Reporter {
 	 * Create a report over all given accounts stating the name and the current balance for each one, plus one line at
 	 * the bottom containing the sum.
 	 */
-	public static String generateBalancesReport(List<Account> accounts) {
+	public static String generateBalancesReport(List<Account> accounts, boolean printSum) {
 		StringBuilder ret = new StringBuilder();
 		
-		int maxNameLength = 0;
-		int maxFormattedBalanceLength = 0;
-		BigDecimal sum = new BigDecimal(0);
-		String currency = "";
-		for (Account account : accounts) {
-			String name = account.getDisplayName();
-			if (name != null) {
-				maxNameLength = Math.max(name.length(), maxNameLength);
+		if (printSum) {
+			BigDecimal sum = new BigDecimal(0);
+			String currency = "";
+			for (Account account : accounts) {
+				BigDecimal balance = account.getBalance();
+				sum = sum.add(balance);
+				currency = account.getCurrency();
 			}
-			String formattedBalance = account.getFormattedBalance();
-			if (formattedBalance != null) {
-				maxFormattedBalanceLength = Math.max(formattedBalance.length(), maxFormattedBalanceLength);
-			}
-			BigDecimal balance = account.getBalance();
-			sum = sum.add(balance);
-			currency = account.getCurrency();
+			
+			Account sumAccount = new Account("", "");
+			sumAccount.setBalance(sum);
+			sumAccount.setCurrency(currency);
+			accounts.add(sumAccount);
 		}
 		
-		Account sumAccount = new Account("", "");
-		sumAccount.setBalance(sum);
-		sumAccount.setCurrency(currency);
-		accounts.add(sumAccount);
+		int maxDisplayNameLength = accounts.stream()
+			.mapToInt(account -> account.getDisplayName() == null ? 0 : account.getDisplayName().length())
+			.max().getAsInt();
+		int maxFormattedBalanceLength = accounts.stream()
+			.mapToInt(account -> account.getFormattedBalance() == null ? 0 : account.getFormattedBalance().length())
+			.max().getAsInt();
 		
 		for (Account account : accounts) {
 			String name = account.getDisplayName();
@@ -54,7 +53,8 @@ public class Reporter {
 			String balanceDate = account.getBalanceDate();
 			
 			ret.append(name);
-			for (int i = 0; i < maxNameLength - name.length() + SPACE_BETWEEN_COLUMNS + maxFormattedBalanceLength
+			for (int i = 0; i < maxDisplayNameLength - name.length() + SPACE_BETWEEN_COLUMNS
+				+ maxFormattedBalanceLength
 				- formattedBalance.length(); i++) {
 				ret.append(" ");
 			}

@@ -1,6 +1,7 @@
 package org.zephyrsoft.hibiscuswatcher;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -49,6 +50,12 @@ public class Starter {
 		usage = "account(s) for --low (multiple times allowed)")
 	private List<String> lowAccounts = null;
 	
+	@Option(name = "--only-account",
+		required = false,
+		metaVar = "<ACCOUNT>",
+		usage = "account(s) for --balances or --single (multiple times allowed)")
+	private List<String> onlyAccounts = null;
+	
 	@Option(name = "--low-minimum",
 		required = false,
 		metaVar = "<WHOLE NUMBER>",
@@ -70,6 +77,10 @@ public class Starter {
 		usage = "do not get single postings which contain a negative amount of money")
 	private boolean noNegative = false;
 	
+	@Option(name = "--no-sum", required = false,
+		usage = "do not print a sum")
+	private boolean noSum = false;
+	
 	public static void main(String[] args) {
 		new Starter(args);
 	}
@@ -88,16 +99,26 @@ public class Starter {
 		
 		if (singlePostings) {
 			// fetch data from Hibscus server
-			List<Account> accounts = fetcher.fetchAccountsWithPostings(daysToFetchInSingleMode, noPositive, noNegative);
+			List<Account> accounts = fetcher.fetchAccountsWithPostings(daysToFetchInSingleMode, noPositive, noNegative)
+				.stream()
+				.filter(account -> onlyAccounts == null
+					|| onlyAccounts.isEmpty()
+					|| onlyAccounts.contains(account.getIban()))
+				.collect(Collectors.toList());
 			// generate report and print it to stdout
 			System.out.println(Reporter.generatePostingsReport(accounts));
 		}
 		
 		if (balances) {
 			// fetch data from Hibscus server
-			List<Account> accounts = fetcher.fetchAccountsWithBalances();
+			List<Account> accounts = fetcher.fetchAccountsWithBalances()
+				.stream()
+				.filter(account -> onlyAccounts == null
+					|| onlyAccounts.isEmpty()
+					|| onlyAccounts.contains(account.getIban()))
+				.collect(Collectors.toList());
 			// generate report and print it to stdout
-			System.out.println(Reporter.generateBalancesReport(accounts));
+			System.out.println(Reporter.generateBalancesReport(accounts, !noSum));
 		}
 		
 		if (lowBalance) {
