@@ -4,7 +4,7 @@
 
 	<groupId>org.zephyrsoft</groupId>
 	<artifactId>hibiscus-watcher</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 
 	<name>Hibiscus-Watcher</name>
 	<description>monitor Hibiscus-Server instances for account balances and postings</description>
