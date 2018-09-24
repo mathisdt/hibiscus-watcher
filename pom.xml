@@ -19,9 +19,9 @@
 	</licenses>
 
 	<scm>
-		<url>https://dev.zephyrsoft.org/svn/projects/hibiscus-watcher/trunk/</url>
-		<connection>scm:svn:https://dev.zephyrsoft.org/svn/projects/hibiscus-watcher/trunk/</connection>
-		<developerConnection>scm:svn:https://dev.zephyrsoft.org/svn/projects/hibiscus-watcher/trunk/</developerConnection>
+		<url>https://github.com/mathisdt/hibiscus-watcher</url>
+		<connection>scm:git:ssh:git@github.com:mathisdt/hibiscus-watcher.git</connection>
+		<developerConnection>scm:git:ssh:git@github.com:mathisdt/hibiscus-watcher.git</developerConnection>
 	</scm>
 
 	<properties>
