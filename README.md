@@ -15,7 +15,7 @@ to get account data securely from a bank and generate a report. The report is in
   and unpack it
 * start it using the script contained in the "bin" directory or with `java -jar hibiscus-watcher.jar`
   and append a combination of these parameters:
-  * --url <URL>                  : URL of the XML-RPC services of Hibiscus
+  * --url <URL>                  : URL of the XML-RPC services of Hibiscus, e.g. https://localhost:8080/xmlrpc/
   * --username <LOGIN>           : username to access the XML-RPC services at the given URL, defaults to 'admin'
   * --password <PASSWORD>        : password to access the XML-RPC services at the given URL
   * --balances                   : get the balances of all accounts
