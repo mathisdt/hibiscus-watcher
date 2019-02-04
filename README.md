@@ -20,7 +20,7 @@ to get account data securely from a bank and generate a report. The report is in
   * --password <PASSWORD>        : password to access the XML-RPC services at the given URL
   * --balances                   : get the balances of all accounts
   * --single                     : get all single postings of all accounts and generate the more detailed postings report (which also contains the balances)
-  * --days <DAYS>                : go back this amount of days for fetching thepostings, e.g. 7 (the default) - this option is only effective in single postings mode!
+  * --days <DAYS>                : go back this amount of days for fetching the postings, e.g. 7 (the default) - this option is only effective in single postings mode!
   * --only-account <ACCOUNT>     : account(s) for --balances or --single (multiple times allowed)
   * --low                        : check if the balance of an account is below a minimum account
   * --low-account <ACCOUNT>      : account(s) for --low (multiple times allowed)
