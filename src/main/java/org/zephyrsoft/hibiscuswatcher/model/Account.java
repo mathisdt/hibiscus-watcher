@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.google.common.collect.ComparisonChain;
@@ -25,7 +25,7 @@ public class Account implements Comparable<Account>, Iterable<Posting> {
 	private BigDecimal balance = new BigDecimal(0);
 	private String currency = "";
 	private String balanceDate = "";
-	private List<Posting> postings = new LinkedList<>();
+	private List<Posting> postings = new ArrayList<>();
 
 	public Account(String name, String iban) {
 		setName(name);
