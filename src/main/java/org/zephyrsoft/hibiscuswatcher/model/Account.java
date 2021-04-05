@@ -12,8 +12,6 @@ import com.google.common.collect.ComparisonChain;
 
 /**
  * A bank account.
- *
- * @author Mathis Dirksen-Thedens
  */
 public class Account implements Comparable<Account>, Iterable<Posting> {
 

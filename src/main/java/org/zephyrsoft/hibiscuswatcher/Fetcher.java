@@ -34,24 +34,22 @@ import org.zephyrsoft.hibiscuswatcher.model.Posting;
 
 /**
  * Fetch information from Hibiscus.
- * 
- * @author Mathis Dirksen-Thedens
  */
 public class Fetcher {
-	
+
 	private static final String REGEX_IBAN = "I\\s*B\\s*A\\s*N\\s*:\\s*([A-Z]\\s*[A-Z]\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*\\d\\s*)";
 	private static final String REGEX_BIC = "B\\s*I\\s*C\\s*:\\s*(\\w\\s*\\w\\s*\\w\\s*\\w\\s*\\w\\s*\\w\\s*\\w\\s*\\w\\s*\\w?+\\s*+\\w?+\\s*+\\w?+\\s*+)";
-	
+
 	private final String url;
 	private final String username;
 	private final String password;
-	
+
 	public Fetcher(String url, String username, String password) {
 		this.url = url;
 		this.username = username;
 		this.password = password;
 	}
-	
+
 	private XmlRpcClient createXmlRpcClient() {
 		// create client configuration
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
@@ -63,36 +61,36 @@ public class Fetcher {
 		}
 		config.setBasicUserName(username);
 		config.setBasicPassword(password);
-		
+
 		// ignore self-signed certificate errors
 		if (url.startsWith("https")) {
 			disableCertCheck();
 		}
-		
+
 		XmlRpcClient client = new XmlRpcClient();
 		client.setConfig(config);
-		
+
 		return client;
 	}
-	
+
 	private static void disableCertCheck() {
 		TrustManager dummy = new X509TrustManager() {
 			@Override
 			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
 				return null;
 			}
-			
+
 			@Override
 			public void checkClientTrusted(X509Certificate[] certs, String authType) {
 				// nothing to do
 			}
-			
+
 			@Override
 			public void checkServerTrusted(X509Certificate[] certs, String authType) {
 				// nothing to do
 			}
 		};
-		
+
 		SSLContext sc = null;
 		try {
 			sc = SSLContext.getInstance("SSL");
@@ -115,7 +113,7 @@ public class Fetcher {
 		};
 		HttpsURLConnection.setDefaultHostnameVerifier(dummy2);
 	}
-	
+
 	private static BigDecimal parseBigDecimal(String in) {
 		if (in.contains(",")) {
 			// take care of the German number formatting of Hibiscus
@@ -123,10 +121,10 @@ public class Fetcher {
 		}
 		return new BigDecimal(in);
 	}
-	
+
 	public List<Account> fetchAccountsWithBalances() {
 		List<Account> ret = new ArrayList<>();
-		
+
 		XmlRpcClient client = createXmlRpcClient();
 		String methodName = "hibiscus.xmlrpc.konto.find";
 		Object result = null;
@@ -136,7 +134,7 @@ public class Fetcher {
 			e.printStackTrace();
 			Starter.die("xml-rpc error while executing service " + methodName);
 		}
-		
+
 		Object[] array = (Object[]) result;
 		if (array != null) {
 			for (Object object : array) {
@@ -155,24 +153,24 @@ public class Fetcher {
 				ret.add(account);
 			}
 		}
-		
+
 		Collections.sort(ret);
-		
+
 		return ret;
 	}
-	
+
 	public List<Account> fetchAccountsWithPostings(int daysToFetch, boolean noPositive, boolean noNegative) {
 		List<Account> ret = fetchAccountsWithBalances();
-		
+
 		XmlRpcClient client = createXmlRpcClient();
 		String methodName = "hibiscus.xmlrpc.umsatz.list";
-		
+
 		Map<String, String> params = new HashMap<>();
 		GregorianCalendar beginOfPeriod = new GregorianCalendar();
 		beginOfPeriod.add(Calendar.DAY_OF_MONTH, -1 * daysToFetch);
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		params.put("datum:min", sdf.format(beginOfPeriod.getTime()));
-		
+
 		Object result = null;
 		try {
 			result = client.execute(methodName, new Object[] { params });
@@ -180,7 +178,7 @@ public class Fetcher {
 			e.printStackTrace();
 			Starter.die("xml-rpc error while executing service " + methodName);
 		}
-		
+
 		Object[] array = (Object[]) result;
 		if (array != null) {
 			for (Object object : array) {
@@ -222,10 +220,10 @@ public class Fetcher {
 				}
 			}
 		}
-		
+
 		return ret;
 	}
-	
+
 	private String find(String regex, String haystack) {
 		Matcher matcher = Pattern.compile(regex).matcher(haystack);
 		if (!matcher.find(0)) {
@@ -234,7 +232,7 @@ public class Fetcher {
 			return matcher.group(1).replaceAll("\\s", "");
 		}
 	}
-	
+
 	private static Account findAccount(List<Account> accounts, String accountId) {
 		for (Account account : accounts) {
 			if (account.getID() != null && account.getID().equals(accountId)) {
@@ -243,5 +241,5 @@ public class Fetcher {
 		}
 		return null;
 	}
-	
+
 }
