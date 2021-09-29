@@ -24,7 +24,7 @@
 	</scm>
 
 	<properties>
-		<version.java>11</version.java>
+		<version.java>17</version.java>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<main.class>org.zephyrsoft.hibiscuswatcher.Starter</main.class>
 
