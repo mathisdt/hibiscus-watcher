@@ -3,6 +3,7 @@ package org.zephyrsoft.hibiscuswatcher;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,16 +18,19 @@ public class Reporter {
 	private static final int SPACE_BETWEEN_COLUMNS = 3;
 
 	/**
-	 * Create a report over all given accounts stating the name and the current balance for each one, plus one line at
-	 * the bottom containing the sum.
+	 * Create a report over all given accounts stating the name and the current
+	 * balance for each one, plus one line at the bottom containing the sum.
 	 */
-	public static String generateBalancesReport(List<Account> accounts, boolean printSum) {
+	public static String generateBalancesReport(final List<Account> accounts, final boolean printSum) {
+		List<Account> accountsAndSum = new ArrayList<>(accounts.size() + 1);
+		accountsAndSum.addAll(accounts);
+
 		StringBuilder ret = new StringBuilder();
 
 		if (printSum) {
 			BigDecimal sum = new BigDecimal(0);
 			String currency = "";
-			for (Account account : accounts) {
+			for (Account account : accountsAndSum) {
 				BigDecimal balance = account.getBalance();
 				sum = sum.add(balance);
 				currency = account.getCurrency();
@@ -35,17 +39,17 @@ public class Reporter {
 			Account sumAccount = new Account("", "");
 			sumAccount.setBalance(sum);
 			sumAccount.setCurrency(currency);
-			accounts.add(sumAccount);
+			accountsAndSum.add(sumAccount);
 		}
 
-		int maxDisplayNameLength = accounts.stream()
+		int maxDisplayNameLength = accountsAndSum.stream()
 			.mapToInt(account -> account.getDisplayName() == null ? 0 : account.getDisplayName().length())
 			.max().getAsInt();
-		int maxFormattedBalanceLength = accounts.stream()
+		int maxFormattedBalanceLength = accountsAndSum.stream()
 			.mapToInt(account -> account.getFormattedBalance() == null ? 0 : account.getFormattedBalance().length())
 			.max().getAsInt();
 
-		for (Account account : accounts) {
+		for (Account account : accountsAndSum) {
 			String name = account.getDisplayName();
 			String formattedBalance = account.getFormattedBalance();
 			String balanceDate = account.getBalanceDate();
@@ -74,7 +78,8 @@ public class Reporter {
 	/**
 	 * Create output only if the given account's balance is less than the minimum.
 	 */
-	public static String generateLowReport(List<Account> accounts, List<String> targetAccounts, Double minimumBalance) {
+	public static String generateLowReport(final List<Account> accounts, final List<String> targetAccounts,
+		final Double minimumBalance) {
 
 		StringBuilder ret = new StringBuilder();
 
@@ -124,14 +129,15 @@ public class Reporter {
 		return ret.toString();
 	}
 
-	private static boolean isUnderMinimum(Account account, Double minimumBalance) {
+	private static boolean isUnderMinimum(final Account account, final Double minimumBalance) {
 		return account.getBalance().doubleValue() <= minimumBalance.doubleValue();
 	}
 
 	/**
-	 * Generate a report over all given accounts stating the name, the balance and all available postings.
+	 * Generate a report over all given accounts stating the name, the balance and
+	 * all available postings.
 	 */
-	public static String generatePostingsReport(List<Account> accounts) {
+	public static String generatePostingsReport(final List<Account> accounts) {
 		StringBuilder ret = new StringBuilder();
 
 		boolean isFirst = true;
@@ -192,7 +198,7 @@ public class Reporter {
 		return ret.toString();
 	}
 
-	private static String formatDate(String in) {
+	private static String formatDate(final String in) {
 		SimpleDateFormat sdfIn = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat sdfOut = new SimpleDateFormat("dd.MM.yyyy");
 		try {
@@ -203,7 +209,7 @@ public class Reporter {
 		}
 	}
 
-	private static boolean isNotEmpty(String in) {
+	private static boolean isNotEmpty(final String in) {
 		return in != null && !in.isEmpty();
 	}
 }
