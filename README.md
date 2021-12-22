@@ -1,4 +1,4 @@
-![license](https://img.shields.io/github/license/mathisdt/hibiscus-watcher.svg?style=flat) [![Travis-CI Build](https://img.shields.io/travis/mathisdt/hibiscus-watcher.svg?label=Travis-CI%20Build&style=flat)](https://travis-ci.org/mathisdt/hibiscus-watcher/) [![last released](https://img.shields.io/github/release-date/mathisdt/hibiscus-watcher.svg?label=last%20released&style=flat)](https://github.com/mathisdt/hibiscus-watcher/releases)
+![license](https://img.shields.io/github/license/mathisdt/hibiscus-watcher.svg?style=flat) [![Build](https://github.com/mathisdt/hibiscus-watcher/actions/workflows/build.yaml/badge.svg)](https://github.com/mathisdt/hibiscus-watcher/actions) [![last released](https://img.shields.io/github/release-date/mathisdt/hibiscus-watcher.svg?label=last%20released&style=flat)](https://github.com/mathisdt/hibiscus-watcher/releases)
 
 # Hibiscus Watcher
 
