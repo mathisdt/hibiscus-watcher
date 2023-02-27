@@ -30,11 +30,6 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Run Maven
         run: TZ=Europe/Berlin xvfb-run mvn clean verify
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: artifacts
-          path: target/*.zip
       - name: Collect release metadata
         if: github.ref == 'refs/heads/master'
         id: collect_release_metadata
@@ -43,25 +38,13 @@ jobs:
           echo "release_timestamp_terse=$(date '+%Y-%m-%d-%H-%M')" >> $GITHUB_ENV
           echo "release_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "release_file=$(ls target/hibiscus-watcher-*.zip)" >> $GITHUB_ENV
-          echo "release_file_short=$(ls target/hibiscus-watcher-*.zip | sed -e 's#^.*/##g')" >> $GITHUB_ENV
       - name: Create release
         if: github.ref == 'refs/heads/master'
         id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: release-${{ env.release_timestamp_terse }}-${{ env.release_hash }}
-          release_name: Release ${{ env.release_timestamp }}
+          name: Release ${{ env.release_timestamp }}
           body: built from commit ${{ env.release_hash }}
-      - name: Upload release artifact
-        if: github.ref == 'refs/heads/master'
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.release_file }}
-          asset_name: ${{ env.release_file_short }}
-          asset_content_type: application/zip
+          tag_name: release-${{ env.release_timestamp_terse }}-${{ env.release_hash }}
+          files: ${{ env.release_file }}
+          token: ${{ secrets.GITHUB_TOKEN }}
