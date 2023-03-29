@@ -7,44 +7,7 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
-    name: Build
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-      - name: Display branch name
-        run: |
-          echo "current branch: $GITHUB_REF"
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: 17
-          check-latest: true
-      - name: Set up Maven cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-      - name: Run Maven
-        run: TZ=Europe/Berlin xvfb-run mvn clean verify
-      - name: Collect release metadata
-        if: github.ref == 'refs/heads/master'
-        id: collect_release_metadata
-        run: |
-          echo "release_timestamp=$(date '+%Y-%m-%d @ %H:%M')" >> $GITHUB_ENV
-          echo "release_timestamp_terse=$(date '+%Y-%m-%d-%H-%M')" >> $GITHUB_ENV
-          echo "release_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "release_file=$(ls target/hibiscus-watcher-*.zip)" >> $GITHUB_ENV
-      - name: Create release
-        if: github.ref == 'refs/heads/master'
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          name: Release ${{ env.release_timestamp }}
-          body: built from commit ${{ env.release_hash }}
-          tag_name: release-${{ env.release_timestamp_terse }}-${{ env.release_hash }}
-          files: ${{ env.release_file }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+    uses: mathisdt/workflows/.github/workflows/maven.yaml@master
+    with:
+      pattern-to-release: hibiscus-watcher-*.zip
+    secrets: inherit
