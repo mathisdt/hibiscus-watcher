@@ -33,6 +33,7 @@
 		<version.ws-commons-util>1.0.1</version.ws-commons-util>
 		<version.guava>33.4.0-jre</version.guava>
 		<version.commons-lang3>3.17.0</version.commons-lang3>
+		<version.commons-codec>1.18.0</version.commons-codec>
 		<version.junit>4.13.2</version.junit>
 	</properties>
 
@@ -41,7 +42,7 @@
 			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
-				<version>1.17.2</version>
+				<version>${version.commons-codec}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -269,7 +270,7 @@
 						<id>zip</id>
 						<phase>package</phase>
 						<goals>
-							<goal>assembly</goal>
+							<goal>single</goal>
 						</goals>
 					</execution>
 				</executions>
