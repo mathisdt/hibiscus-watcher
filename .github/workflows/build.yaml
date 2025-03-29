@@ -1,4 +1,5 @@
-name: Build
+name: build
+run-name: build commit with earthly
 
 on:
   push:
@@ -7,7 +8,7 @@ on:
 
 jobs:
   release:
-    uses: mathisdt/workflows/.github/workflows/maven.yaml@master
+    uses: mathisdt/workflows/.github/workflows/earthly.yaml@master
     with:
-      pattern-to-release: hibiscus-watcher-*.zip
+      pattern-to-release: target/hibiscus-watcher-*.zip
     secrets: inherit
