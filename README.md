@@ -28,3 +28,11 @@ to get account data securely from a bank and generate a report. The report is in
   * --no-negative                  : do not get single postings which contain a negative amount of money
   * --no-positive                  : do not get single postings which contain a positive amount of money
   * --no-sum                       : do not print a sum
+
+## Build using Earthly
+
+The CI build of this project uses [Earthly](https://docs.earthly.dev/), which in turn uses
+container virtualization (e.g. Docker or Podman). You can also run the build locally (if you
+have Earthly as well as an OCI compatible container engine installed) by executing
+`earthly +build`. This will create a container with everything needed for the build,
+create the package inside it and then copy the results to the directory `target` for you.
