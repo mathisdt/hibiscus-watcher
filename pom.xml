@@ -33,7 +33,7 @@
 		<version.ws-commons-util>1.0.1</version.ws-commons-util>
 		<version.guava>33.5.0-jre</version.guava>
 		<version.commons-lang3>3.19.0</version.commons-lang3>
-		<version.commons-codec>1.19.0</version.commons-codec>
+		<version.commons-codec>1.20.0</version.commons-codec>
 		<version.junit>4.13.2</version.junit>
 	</properties>
 
