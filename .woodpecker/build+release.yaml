@@ -23,7 +23,8 @@ steps:
       - event: manual
         branch: [ master, main ]
     depends_on: [ build ]
-    image: ubuntu:noble
+    image: codeberg.org/mathisdt/buildhelper:latest
+    pull: true
     environment:
       PATTERN_TO_RELEASE: 'target/hibiscus-watcher-*.zip'
       TOKEN_REPO_READWRITE:
@@ -31,9 +32,6 @@ steps:
     commands: |
       set -eu
       export TZ=Europe/Berlin
-      echo installing apt packages...
-      apt-get update >/dev/null 2>&1
-      apt-get -y install git curl jq >/dev/null 2>&1
       export release_timestamp=$(date '+%Y-%m-%d @ %H:%M')
       export release_timestamp_terse=$(date '+%Y-%m-%d-%H-%M')
       export release_hash_short=$(git rev-parse --short HEAD)
@@ -82,7 +80,8 @@ steps:
       - event: [ push, manual ]
         branch: [ master, main ]
     depends_on: []
-    image: alpine/git:latest
+    image: codeberg.org/mathisdt/buildhelper:latest
+    pull: true
     environment:
       TOKEN_GITHUB:
         from_secret: TOKEN_GITHUB
