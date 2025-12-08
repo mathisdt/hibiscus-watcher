@@ -18,63 +18,19 @@ steps:
     commands: |
       export TZ=Europe/Berlin
       mvn clean verify -U --no-transfer-progress
-  - name: release on codeberg
+  - name: release on Codeberg
     when:
       - event: manual
         branch: [ master, main ]
     depends_on: [ build ]
-    image: codeberg.org/mathisdt/buildhelper:latest
+    image: codeberg.org/mathisdt/releaseplugin:latest
     pull: true
-    environment:
-      PATTERN_TO_RELEASE: 'target/hibiscus-watcher-*.zip'
-      TOKEN_REPO_READWRITE:
+    settings:
+      TOKEN:
         from_secret: TOKEN_REPO_READWRITE
-    commands: |
-      set -eu
-      export TZ=Europe/Berlin
-      export release_timestamp=$(date '+%Y-%m-%d @ %H:%M')
-      export release_timestamp_terse=$(date '+%Y-%m-%d-%H-%M')
-      export release_hash_short=$(git rev-parse --short HEAD)
-      export release_hash=$(git rev-parse HEAD)
-      export tag=release-$release_timestamp_terse-$release_hash_short
-      echo TIMESTAMP: $release_timestamp
-      echo HASH: $release_hash
-      echo TAG: $tag
-      curl --silent \
-           --header "Content-Type: application/json" \
-           --header "Authorization: token $TOKEN_REPO_READWRITE" \
-           --request POST \
-           --data "{\"tag_name\": \"$tag\", \"target\": \"$release_hash\"}" \
-           https://codeberg.org/api/v1/repos/$CI_REPO_OWNER/$CI_REPO_NAME/tags
-      export RELEASE=$(curl --silent \
-                            --header "Content-Type: application/json" \
-                            --header "Authorization: token $TOKEN_REPO_READWRITE" \
-                            --request POST \
-                            --data "{\"name\": \"Release $release_timestamp\", \"body\": \"built from commit $release_hash_short\", \"tag_name\": \"$tag\", \"target_commitish\": \"$release_hash\", \"draft\": false, \"hide_archive_links\": false, \"prerelease\": false}" \
-                            https://codeberg.org/api/v1/repos/$CI_REPO_OWNER/$CI_REPO_NAME/releases)
-      export RELEASE_ID=$(echo $RELEASE | jq -r '.id')
-      if [ -n "$PATTERN_TO_RELEASE" ]; then
-          export files=$(ls $PATTERN_TO_RELEASE)
-          echo FILES: $files
-          ls $PATTERN_TO_RELEASE | while read FILE; do
-              export BASEFILE=$(basename $FILE)
-              echo ADDING TO RELEASE $RELEASE_ID: $FILE
-              curl --silent \
-                   --header "Authorization: token $TOKEN_REPO_READWRITE" \
-                   --request POST \
-                   --form attachment=@$FILE \
-                   https://codeberg.org/api/v1/repos/$CI_REPO_OWNER/$CI_REPO_NAME/releases/$RELEASE_ID/assets?name=$BASEFILE
-          done
-          echo UPDATING RELEASE to not appear as draft
-          export RELEASE=$(curl --silent \
-                                --header "Content-Type: application/json" \
-                                --header "Authorization: token $TOKEN_REPO_READWRITE" \
-                                --request PATCH \
-                                --data "{\"draft\": false}" \
-                                https://codeberg.org/api/v1/repos/$CI_REPO_OWNER/$CI_REPO_NAME/releases/$RELEASE_ID)
-      else
-          echo NO FILES GIVEN
-      fi
+      REPO_OWNER: $CI_REPO_OWNER
+      REPO_NAME: $CI_REPO_NAME
+      PATTERN_TO_RELEASE: 'target/hibiscus-watcher-*.zip'
   - name: mirror to Github
     when:
       - event: [ push, manual ]
