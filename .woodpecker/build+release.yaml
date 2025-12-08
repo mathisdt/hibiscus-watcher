@@ -28,8 +28,6 @@ steps:
     settings:
       TOKEN:
         from_secret: TOKEN_REPO_READWRITE
-      REPO_OWNER: $CI_REPO_OWNER
-      REPO_NAME: $CI_REPO_NAME
       PATTERN_TO_RELEASE: 'target/hibiscus-watcher-*.zip'
   - name: mirror to Github
     when:
