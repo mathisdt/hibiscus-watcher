@@ -26,9 +26,9 @@ steps:
     image: codeberg.org/mathisdt/releaseplugin:latest
     pull: true
     settings:
+      PATTERN_TO_RELEASE: 'target/hibiscus-watcher-*.zip'
       TOKEN:
         from_secret: TOKEN_REPO_READWRITE
-      PATTERN_TO_RELEASE: 'target/hibiscus-watcher-*.zip'
   - name: mirror to Github
     when:
       - event: [ push, manual ]
