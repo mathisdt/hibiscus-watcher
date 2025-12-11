@@ -10,11 +10,25 @@ clone:
       recursive: true
 
 steps:
+  - name: mirror to Github
+    when:
+      - event: [ push, manual ]
+        branch: [ master, main ]
+    depends_on: []
+    image: codeberg.org/mathisdt/buildhelper:latest
+    pull: true
+    environment:
+      TOKEN_GITHUB:
+        from_secret: TOKEN_GITHUB
+    commands: |
+      git remote add github https://mathisdt:$TOKEN_GITHUB@github.com/mathisdt/$CI_REPO_NAME.git
+      git push github
   - name: build
     when:
       - event: [ push, manual ]
     depends_on: []
     image: maven:3.9-eclipse-temurin-25-alpine
+    pull: true
     commands: |
       export TZ=Europe/Berlin
       mvn clean verify -U --no-transfer-progress
@@ -29,16 +43,3 @@ steps:
       PATTERN_TO_RELEASE: 'target/hibiscus-watcher-*.zip'
       TOKEN:
         from_secret: TOKEN_REPO_READWRITE
-  - name: mirror to Github
-    when:
-      - event: [ push, manual ]
-        branch: [ master, main ]
-    depends_on: []
-    image: codeberg.org/mathisdt/buildhelper:latest
-    pull: true
-    environment:
-      TOKEN_GITHUB:
-        from_secret: TOKEN_GITHUB
-    commands: |
-      git remote add github https://mathisdt:$TOKEN_GITHUB@github.com/mathisdt/$CI_REPO_NAME.git
-      git push github
