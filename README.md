@@ -9,7 +9,7 @@ to get account data securely from a bank and generate a report. The report is in
 ## Gettings started
 
 * get the [Java Runtime Environment (JRE)](http://java.com/) in version 8 or newer
-* download the [lastest release](https://github.com/mathisdt/hibiscus-watcher/releases/latest)
+* download the [lastest release](https://codeberg.org/mathisdt/hibiscus-watcher/releases/latest)
   and unpack it
 * start it using the script contained in the "bin" directory or with `java -jar hibiscus-watcher.jar`
   and append a combination of these parameters:
