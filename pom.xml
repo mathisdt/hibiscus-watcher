@@ -18,9 +18,7 @@
 	</licenses>
 
 	<scm>
-		<url>https://github.com/mathisdt/hibiscus-watcher</url>
-		<connection>scm:git:ssh:git@github.com:mathisdt/hibiscus-watcher.git</connection>
-		<developerConnection>scm:git:ssh:git@github.com:mathisdt/hibiscus-watcher.git</developerConnection>
+		<url>https://codeberg.org/mathisdt/hibiscus-watcher</url>
 	</scm>
 
 	<properties>
