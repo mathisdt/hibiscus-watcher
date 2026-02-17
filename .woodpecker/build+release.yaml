@@ -27,11 +27,11 @@ steps:
     when:
       - event: [ push, manual ]
     depends_on: []
-    image: maven:3.9-eclipse-temurin-25-alpine
+    image: eclipse-temurin:25-jdk
     pull: true
     commands: |
       export TZ=Europe/Berlin
-      mvn clean verify -U --no-transfer-progress
+      ./mvnw clean verify -U --no-transfer-progress
   - name: release on Codeberg
     when:
       - event: manual
